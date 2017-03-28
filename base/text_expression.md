@@ -1,4 +1,4 @@
-참고 `https://www.lucypark.kr/slides/2015-pyconkr/#1`
+***참고:`https://www.lucypark.kr/slides/2015-pyconkr/#1`***
 
 # 텍스트를 표현하는 방법
 

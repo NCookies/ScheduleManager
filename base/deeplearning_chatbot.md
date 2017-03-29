@@ -2,9 +2,6 @@
 *http://www.wildml.com/2016/04/deep-learning-for-chatbots-part-1-introduction/* - 원문 </br>
 *http://mlduck.tistory.com/6* - 번역
 
-### Description
-
-
 # DEEP LEARNING FOR CHATBOTS - Part 1
 
 ## A TAXONOMY OF MODELS
@@ -85,3 +82,52 @@
   다음은 최근 Andrew Ng 교수의 인터뷰이다.
 
 >Most of the value of deep learning today is in narrow domains where you can get a lot of data. Here’s one example of something it cannot do: have a meaningful conversation. There are demos, and if you cherry-pick the conversation, it looks like it’s having a meaningful conversation, but if you actually try it yourself, it quickly goes off the rails.
+
+</br></br>
+
+참고 </br>
+*http://www.wildml.com/2016/07/deep-learning-for-chatbots-2-retrieval-based-model-tensorflow/* - 원문
+*http://mlduck.tistory.com/7* - 번역
+
+# DEEP LEARNING FOR CHATBOTS - Part 2
+
+- 이번에는 검색기반 봇을 구현할 것임
+- 생성 모델이 좀 더 유연한 반응을 끌어낼 수 있지만 실용화 단계는 아님
+- 수 많은 훈련 데이터가 필요하고 최적화가 어렵기 때문
+- 현존하는 대부분의 챗봇은 검색기반 또는 검색기반과 생성 모델을 결합한 것임
+- **그렇다면 Schedule Manager 에서는 일정 관리 대화만 검색기반으로 하고 나머지 도메인은 생성 모델로 하는건 어떨까?**
+
+## data set
+
+- buntu Dialog Corpus (UDC) 는 이용가능한 가장 큰 공개 대화 데이터셋 중 하나
+- 훈련 데이터는 1,000,000 개의 예제와 50% 긍정 (label 1), 50% 부정 (label 0)으로 이루어져있음
+- 각 예제는 문맥과, 그 시점까지의 대화, 발언utterance, 문맥에 대한 응답으로 구성
+- 긍정은 실제 문맥에 대한 옳은 응답인 것이고 부정은 정답 외에 랜덤으로 뽑음
+- 모델 평가 방법 : **reacll@k**
+  - 모델이 10개의 가능한 응답 중 k개의 좋은 응답을 고르도록 함
+  - 이 중에서 정답이 있다면 그 예제는 정답 처리됨
+  - 따라서 k가 커질수록 정답률이 높아짐
+  - k=10 이면 100% 의 recall 을 얻음
+  - k=1 이면, 모델은 정답 응답을 고를 단 한번의 기회밖에 없음
+  - 이 데이터셋에서 9 distractors는 랜덤하게 골라졌지만, 실제 세계에서는 몇 백만개의 가능한 응답이 있을 수 있고, 어느 것이 옳은지 모름
+  - 이 모든 것을 평가하는 것은 비용이 너무 큼
+  - 아니면 가능한 응답이 몇 백개 정도 밖에 없다면 모두 평가할 수 있음
+  - Google Smart Reply 는 클러스터링 기술을 사용하여 처음부터 선택할 수있는 일련의 가능한 응답을 제시함
+
+## BASELINES
+- 어떤 종류의 성능을 원하는지 이해하기 위해 간단한 baseline 모델
+- ***이 부분은 잘 이해가 가지 않음. 나중에 다시 봐야 함***
+```
+def evaluate_recall(y, y_test, k=1):
+    num_examples = float(len(y))
+    num_correct = 0
+    for predictions, label in zip(y, y_test):
+        if label in predictions[:k]:
+            num_correct += 1
+    return num_correct/num_examples
+```
+```
+# Random Predictor
+def predict_random(context, utterances):
+    return np.random.choice(len(utterances), 10, replace=False)
+```

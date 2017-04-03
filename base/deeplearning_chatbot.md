@@ -115,19 +115,42 @@
   - Google Smart Reply 는 클러스터링 기술을 사용하여 처음부터 선택할 수있는 일련의 가능한 응답을 제시함
 
 ## BASELINES
-- 어떤 종류의 성능을 원하는지 이해하기 위해 간단한 baseline 모델
-- ***이 부분은 잘 이해가 가지 않음. 나중에 다시 봐야 함***
+- 어떤 종류의 성능을 원하는지 이해하기 위해 간단한 baseline 모델(자세한 설명은 주석에)
 ```
-def evaluate_recall(y, y_test, k=1):
+def evaluate_recall(y, y_test, k=1):    # recall@k 알고리즘을 구현한 함수
     num_examples = float(len(y))
     num_correct = 0
     for predictions, label in zip(y, y_test):
-        if label in predictions[:k]:
-            num_correct += 1
-    return num_correct/num_examples
+        if label in predictions[:k]:    # k 개의 prediction 중 정답(label)이 있는지 확인
+            num_correct += 1    // prediction 에서 앞쪽에 있을수록 높은 점수를 얻은 것임
+    return num_correct/num_examples    # 정답률을 반환함
 ```
+- first one (index 0) is always the correct one because the utterance column comes before the distractor columns in our data.
+- 이 부분은 잘 이해가 되지 않음...
 ```
 # Random Predictor
 def predict_random(context, utterances):
     return np.random.choice(len(utterances), 10, replace=False)
+    # 10개를 중복 없이 랜덤으로 추출함
+# Evaluate Random predictor
+y_random = [predict_random(test_df.Context[x], test_df.iloc[x,1:].values) for x in range(len(test_df))]
+y_test = np.zeros(len(y_random))
+for n in [1, 2, 5, 10]:
+print("Recall @ ({}, 10): {:g}".format(n, evaluate_recall(y_random, y_test, n)))
 ```
+- original paper에서 언급한 것은 random predictor가 아니라 tf-idf 임무
+- term frequency – inverse document frequency : 문서에서의 단어가 전체 문서집합에서 상대적으로 얼마나 중요한지를 측정
+- 직관적으로, 문맥과 응답이 비슷한 단어를 가지고 있다면, 그 둘은 올바른 쌍일 가능성이 큼
+- 적어도 random predictor 보다는 가능성이 높음
+- 그렇지만 여전히 만족스러운 성능은 나오지 않음
+- tf-idf는 중요한 신호가 될 수 있는 단어의 순서를 무시함
+- 따라서 이를 보완할 neural network를 함께 사용
+
+## DUAL ENCODER LSTM
+- Dual Encoder LSTM network
+- 이 타입의 네트워크는 이 문제에 적용할 수 있는 모델 중 하나임
+- 물론 가장 좋은 것은 아님
+- 기계 번역 분야에서 자주 쓰이는 seq2seq 도 이 문제에 적합함
+- 여기서 Dual Encoder 를 사용하는 이유는 이 문제에 대해 성능이 잘 나온다는 논문이 있기 때문(본문의 링크 참조)
+<img src="http://d3kbpzbmcynnmx.cloudfront.net/wp-content/uploads/2016/04/Screen-Shot-2016-04-21-at-10.51.18-AM-1024x690.png" alt="error">
+- sf

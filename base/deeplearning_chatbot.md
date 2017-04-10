@@ -153,4 +153,3 @@ print("Recall @ ({}, 10): {:g}".format(n, evaluate_recall(y_random, y_test, n)))
 - 기계 번역 분야에서 자주 쓰이는 seq2seq 도 이 문제에 적합함
 - 여기서 Dual Encoder 를 사용하는 이유는 이 문제에 대해 성능이 잘 나온다는 논문이 있기 때문(본문의 링크 참조)
 <img src="http://d3kbpzbmcynnmx.cloudfront.net/wp-content/uploads/2016/04/Screen-Shot-2016-04-21-at-10.51.18-AM-1024x690.png" alt="error">
-- sf

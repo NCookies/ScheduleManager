@@ -11,9 +11,9 @@
 - 동일한 태스크를 한 시퀀스의 모든 요소마다 적용
 - 출력 결과는 이전의 계산 결과에 영향
 - RNN은 현재까지 계산된 결과에 대한 "메모리" 정보를 갖고 있다고 볼 수도 있음
-<img src="http://www.wildml.com/wp-content/uploads/2015/09/rnn.jpg"/>
+<img src="http://www.wildml.com/wp-content/uploads/2015/09/rnn.jpg"/>  
 - x_t 는 시간 스텝(time step) t에서의 입력값임
-- s_t 는 시간 스텝 t에서의 hidden state. 네트워크의 '메모리' 부분
+- s_t 는 시간 스텝 t에서의 hidden state. 네트워크의 '메모리' 부분  
 - <img src="http://s0.wp.com/latex.php?latex=s_t%3Df%28Ux_t+%2B+Ws_%7Bt-1%7D%29&bg=ffffff&fg=000&s=0">
 - 이 때 f는 보통 tanh 나 ReLU 가 사용됨
 - 첫 hidden state를 계산하기 위한 s_t-1 은 0으로 설정됨
@@ -190,3 +190,12 @@ y:
 what are n't you understanding about this ? ! SENTENCE_END
 [51, 27, 16, 10, 856, 53, 25, 34, 69, 1]
 ```
+
+# RNN 모델 만들기
+- 입력 x 는 단어 시퀀스이고 x_t 는 한 단어임
+- 행렬곱 계산 때문에 단어 인덱스를 바로 입력으로 사용할 수 없음
+- 대신 각 단어를 사전의 크기(vocabulary_size)의 one-hot-vector 로 나타냄
+- ex) 해당 단어의 인덱스가 32 일 때, 32 번째 요소가 1인 one-hot-vector 로 표현
+- 따라서 각 x_t 는 벡터이고 x 는 각 row 가 한 단어를 나타내는 행렬임
+- 이 변환은 전처리 과정이 아닌 신경망 코드에서 수행함
+- 네트워크 출력인 o 도 비슷하지만 확률값을 포함하게 됨

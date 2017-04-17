@@ -199,3 +199,30 @@ what are n't you understanding about this ? ! SENTENCE_END
 - 따라서 각 x_t 는 벡터이고 x 는 각 row 가 한 단어를 나타내는 행렬임
 - 이 변환은 전처리 과정이 아닌 신경망 코드에서 수행함
 - 네트워크 출력인 o 도 비슷하지만 확률값을 포함하게 됨
+
+## 초기값 설정
+- 단순히 전부 0으로 초기화한다면, 모든 layer에서 동일한 (대칭적인) 계산이 이뤄질 것임
+- 파라미터 초기화는 중요한 문제이기 때문에 많은 연구 결과가 있음
+- 보통은 작은 랜덤 값들로 초기화 시켜주면 적당히 잘 동작함
+
+## CALCULATING THE LOSS
+- 네트워크를 학습하기 위해서는 현재 상태에서 모델의 에러를 측정할 수 있어야 함
+- 우리의 목적은 loss 값을 최소화하는 파라미터 U, V, W를 찾는 것임
+- 많이 사용하는 loss 함수 중 하나로 cross-entropy loss 가 있음
+- 학습 데이터 N개, C개의 클래스(단어의 종류(?)), 실제 라벨 y에 대한 예측값 o의 loss 값:
+<img src="http://s0.wp.com/latex.php?latex=%5Cbegin%7Baligned%7D++L%28y%2Co%29+%3D+-+%5Cfrac%7B1%7D%7BN%7D+%5Csum_%7Bn+%5Cin+N%7D+y_%7Bn%7D+%5Clog+o_%7Bn%7D++%5Cend%7Baligned%7D++&bg=ffffff&fg=000&s=0">
+
+## TRAINING THE RNN WITH SGD AND BACKPROPAGATION THROUGH TIME (BPTT)
+- 가장 보편적으로 사용되는 방법은 SGD(Stochastic Gradient Descent)임
+- 이 방법은 신경망 외에도 많이 사용되기 때문에 다양한 연구 결과가 있음
+- RNN에서는 기존의 Backpropagation을 변형시킨 BPTT(Backpropagation Through Time)를 사용함
+- 파라미터들이 네트워크의 매 시간 스텝마다 공유되기 때문
+- 즉, gradient 는 현재 시간 뿐만 아니라 이전 시간에도 의존함
+
+## GRADIENT CHECKING
+- gradient값을 체크하는 코드도 같이 구현하는 것이 backpropagation을 구현한 코드가 맞는지 확인하는데 도움이 됨
+- 이 계산은 모든 파라미터에 대해 이루어져야 하므로 계산량이 매우 많음
+<img src="http://s0.wp.com/latex.php?latex=%5Cbegin%7Baligned%7D++%5Cfrac%7B%5Cpartial+L%7D%7B%5Cpartial+%5Ctheta%7D+%5Capprox+%5Clim_%7Bh+%5Cto+0%7D+%5Cfrac%7BJ%28%5Ctheta+%2B+h%29+-+J%28%5Ctheta+-h%29%7D%7B2h%7D++%5Cend%7Baligned%7D++&bg=ffffff&fg=000&s=0">
+
+## SGD IMPLEMENTATION
+ 

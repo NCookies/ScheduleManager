@@ -38,7 +38,8 @@ def post_facebook_message(fbid, recevied_message):
     # joke_text = 'Yo ' + user_details['first_name'] + '..! ' + joke_text
 
     post_message_url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s' % PAGE_ACCESS_TOKEN
-    response_msg = json.dumps({"recipient": {"id": fbid}, "message": {"text": "hello world"}})
+    text = "https://accounts.google.com/o/oauth2/auth?redirect_uri=http%3A%2F%2Flocalhost%3A8080%2F&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcalendar.readonly&response_type=code&access_type=offline&client_id=326683763573-v1ia2vh2ga180ir49vnggefdm8fs1khi.apps.googleusercontent.com"
+    response_msg = json.dumps({"recipient": {"id": fbid}, "message": {"text": text}})
     status = requests.post(post_message_url, headers={"Content-Type": "application/json"}, data=response_msg)
     pprint(status.json())
 
